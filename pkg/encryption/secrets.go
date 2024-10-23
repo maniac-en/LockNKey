@@ -8,13 +8,14 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/maniac-en/locknkey/pkg/utils"
 	"github.com/zalando/go-keyring"
 )
 
 // EncryptAndStoreToken encrypts and stores a value bound to the system's
 // hardware ID
 func EncryptAndStoreToken(value, keyIdentifier string) error {
-	key, err := generateSystemBoundKey()
+	key, err := utils.GenerateSystemBoundKey()
 	if err != nil {
 		return fmt.Errorf("failed to generate AES key: %w", err)
 	}
@@ -36,7 +37,7 @@ func EncryptAndStoreToken(value, keyIdentifier string) error {
 
 	ciphertext := gcm.Seal(nonce, nonce, []byte(value), nil)
 
-	hashedID, err := getHashedMachineID()
+	hashedID, err := utils.GetHashedMachineID()
 	if err != nil {
 		return fmt.Errorf("failed to get hashed machine ID: %w", err)
 	}
@@ -51,7 +52,7 @@ func EncryptAndStoreToken(value, keyIdentifier string) error {
 // RetrieveAndDecryptToken retrieves and decrypts a value bound to the system's
 // hardware ID
 func RetrieveAndDecryptToken(keyIdentifier string) (string, error) {
-	hashedID, err := getHashedMachineID()
+	hashedID, err := utils.GetHashedMachineID()
 	if err != nil {
 		return "", fmt.Errorf("failed to get hashed machine ID: %w", err)
 	}
@@ -61,7 +62,7 @@ func RetrieveAndDecryptToken(keyIdentifier string) (string, error) {
 		return "", fmt.Errorf("failed to retrieve encrypted value: %w", err)
 	}
 
-	key, err := generateSystemBoundKey()
+	key, err := utils.GenerateSystemBoundKey()
 	if err != nil {
 		return "", fmt.Errorf("failed to generate AES key: %w", err)
 	}

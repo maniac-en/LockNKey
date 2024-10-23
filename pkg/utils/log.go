@@ -45,7 +45,8 @@ func InitLogger(logFileName string) error {
 	return nil
 }
 
-// GetLogger returns the logger instance if initialized, otherwise exits the program
+// GetLogger returns the logger instance if initialized, otherwise exits the
+// program
 func GetLogger() *slog.Logger {
 	if logger == nil {
 		fmt.Println("Logger is not initialized. Please call InitLogger first.")
